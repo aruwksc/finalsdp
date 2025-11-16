@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .tab-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .response {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .response.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .response.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .grade-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .result-card h3 {
+            margin-bottom: 10px;
+        }
+
+        .result-card p {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+
+        pre {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .api-endpoint {
+            font-family: monospace;
+            background: #f5f5f5;
+            padding: 3px 6px;
+            border-radius: 3px;
+            color: #d63384;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🎓 School Management System</h1>
+
+    <div class="tabs">
+        <button class="tab-button active" onclick="openTab('users')">👥 Users (Decorator)</button>
+        <button class="tab-button" onclick="openTab('grades')">📝 Grades (Observer)</button>
+        <button class="tab-button" onclick="openTab('calculator')">📊 Calculator (Strategy)</button>
+        <button class="tab-button" onclick="openTab('api')">🔗 API Documentation</button>
+    </div>
+
+    <!-- USERS TAB -->
+    <div id="users" class="tab-content active">
+        <h2>User Management - Decorator Pattern</h2>
+        <div class="info-box">
+            <strong>Decorator Pattern</strong> allows dynamically adding roles and permissions to users.
+        </div>
+
+        <form onsubmit="createUser(event)">
+            <div class="form-group">
+                <label>User Name</label>
+                <input type="text" id="userName" required placeholder="John Smith">
+            </div>
+
+            <div class="form-group">
+                <label>User ID</label>
+                <input type="text" id="userId" required placeholder="U001">
+            </div>
+
+            <div class="form-group">
+                <label>Roles</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="roleTeacher" value="teacher">
+                        <label for="roleTeacher">Teacher</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="roleAdmin" value="admin">
+                        <label for="roleAdmin">Admin</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="roleCurator" value="curator">
+                        <label for="roleCurator">Group Curator</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" id="groupNameField" style="display:none;">
+                <label>Group Name (for curator)</label>
+                <input type="text" id="groupName" placeholder="Group 10-A">
+            </div>
+
+            <button type="submit">Create User</button>
+        </form>
+
+        <div id="userResponse" class="response"></div>
+    </div>
+
+    <!-- GRADES TAB -->
+    <div id="grades" class="tab-content">
+        <h2>Grade Management - Observer Pattern</h2>
+        <div class="info-box">
+            <strong>Observer Pattern</strong> automatically notifies students and parents about new grades.
+        </div>
+
+        <h3>1. Subscribe to Notifications</h3>
+        <form onsubmit="subscribeObserver(event)" style="margin-bottom: 30px;">
+            <div class="form-group">
+                <label>Observer Type</label>
+                <select id="observerType" onchange="toggleChildName()" required>
+                    <option value="student">Student</option>
+                    <option value="parent">Parent</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="observerName" required placeholder="John Smith">
+            </div>
+
+            <div class="form-group">
+                <label>ID</label>
+                <input type="text" id="observerId" required placeholder="S001">
+            </div>
+
+            <div class="form-group" id="childNameField" style="display:none;">
+                <label>Child Name</label>
+                <input type="text" id="childName" placeholder="John Jr.">
+            </div>
+
+            <button type="submit">Subscribe</button>
+        </form>
+
+        <h3>2. Add Grade</h3>
+        <form onsubmit="addGrade(event)">
+            <div class="form-group">
+                <label>Student ID</label>
+                <input type="text" id="gradeStudentId" required placeholder="S001">
+            </div>
+
+            <div class="form-group">
+                <label>Subject</label>
+                <input type="text" id="gradeSubject" required placeholder="Math">
+            </div>
+
+            <div class="form-group">
+                <label>Grade</label>
+                <input type="number" id="gradeValue" step="0.1" min="0" max="5" required placeholder="4.5">
+            </div>
+
+            <div class="form-group">
+                <label>Grade Type</label>
+                <select id="gradeType" required>
+                    <option value="Exam">Exam</option>
+                    <option value="Homework">Homework</option>
+                    <option value="Project">Project</option>
+                    <option value="Test">Test</option>
+                </select>
+            </div>
+
+            <button type="submit">Add Grade</button>
+        </form>
+
+        <div id="gradeResponse" class="response"></div>
+    </div>
+
+    <!-- CALCULATOR TAB -->
+    <div id="calculator" class="tab-content">
+        <h2>Grade Calculator - Strategy Pattern</h2>
+        <div class="info-box">
+            <strong>Strategy Pattern</strong> allows using different algorithms to calculate final grades.
+        </div>
+
+        <form onsubmit="calculateGrade(event)">
+            <div class="form-group">
+                <label>Calculation Strategy</label>
+                <select id="strategy" required>
+                    <option value="exam">Exams Only</option>
+                    <option value="homework">Exams + Homework (70/30)</option>
+                    <option value="comprehensive">Comprehensive (50/25/25)</option>
+                </select>
+            </div>
+
+            <div class="grade-inputs">
+                <div class="form-group">
+                    <label>Exams (comma separated)</label>
+                    <input type="text" id="examGrades" placeholder="4.5, 5.0, 4.0">
+                </div>
+
+                <div class="form-group">
+                    <label>Homework</label>
+                    <input type="text" id="homeworkGrades" placeholder="4.0, 4.5, 5.0">
+                </div>
+
+                <div class="form-group">
+                    <label>Projects</label>
+                    <input type="text" id="projectGrades" placeholder="5.0, 4.5">
+                </div>
+            </div>
+
+            <button type="submit">Calculate Final Grade</button>
+        </form>
+
+        <div id="calculatorResponse" class="response"></div>
+    </div>
+
+    <!-- API TAB -->
+    <div id="api" class="tab-content">
+        <h2>API Documentation</h2>
+
+        <h3>Base URL</h3>
+        <p class="api-endpoint">http://localhost:8080/api</p>
+
+        <h3>Endpoints</h3>
+
+        <h4>1. Create User</h4>
+        <p><strong>POST</strong> <span class="api-endpoint">/users/create</span></p>
+        <pre>{
+  "name": "John Smith",
+  "userId": "U001",
+  "roles": ["teacher", "admin"],
+  "groupName": "Group 10-A"
+}</pre>
+
+        <h4>2. Get User</h4>
+        <p><strong>GET</strong> <span class="api-endpoint">/users/{userId}</span></p>
+
+        <h4>3. Add Grade</h4>
+        <p><strong>POST</strong> <span class="api-endpoint">/grades/add</span></p>
+        <pre>{
+  "studentId": "S001",
+  "subject": "Math",
+  "grade": 4.5,
+  "gradeType": "Exam"
+}</pre>
+
+        <h4>4. Subscribe to Notifications</h4>
+        <p><strong>POST</strong> <span class="api-endpoint">/grades/subscribe</span></p>
+        <pre>{
+  "type": "student",
+  "name": "John Smith",
+  "id": "S001",
+  "childName": ""
+}</pre>
+
+        <h4>5. Calculate Grade</h4>
+        <p><strong>POST</strong> <span class="api-endpoint">/grades/calculate?strategy=comprehensive</span></p>
+        <pre>{
+  "grades": {
+    "exam": [4.5, 5.0, 4.0],
+    "homework": [4.0, 4.5, 5.0],
+    "project": [5.0, 4.5]
+  }
+}</pre>
+
+        <h4>6. Get Student Grades</h4>
+        <p><strong>GET</strong> <span class="api-endpoint">/grades/{studentId}</span></p>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:8080/api';
+
+    function openTab(tabName) {
+        const contents = document.querySelectorAll('.tab-content');
+        const buttons = document.querySelectorAll('.tab-button');
+
+        contents.forEach(content => content.classList.remove('active'));
+        buttons.forEach(button => button.classList.remove('active'));
+
+        document.getElementById(tabName).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    document.getElementById('roleCurator').addEventListener('change', function() {
+        document.getElementById('groupNameField').style.display =
+            this.checked ? 'block' : 'none';
+    });
+
+    function toggleChildName() {
+        const type = document.getElementById('observerType').value;
+        document.getElementById('childNameField').style.display =
+            type === 'parent' ? 'block' : 'none';
+    }
+
+    async function createUser(event) {
+        event.preventDefault();
+
+        const roles = [];
+        if (document.getElementById('roleTeacher').checked) roles.push('teacher');
+        if (document.getElementById('roleAdmin').checked) roles.push('admin');
+        if (document.getElementById('roleCurator').checked) roles.push('curator');
+
+        const data = {
+            name: document.getElementById('userName').value,
+            userId: document.getElementById('userId').value,
+            roles: roles,
+            groupName: document.getElementById('groupName').value
+        };
+
+        try {
+            const response = await fetch(`${API_URL}/users/create`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            showResponse('userResponse', true, result);
+        } catch (error) {
+            showResponse('userResponse', false, { error: error.message });
+        }
+    }
+
+    async function subscribeObserver(event) {
+        event.preventDefault();
+
+        const data = {
+            type: document.getElementById('observerType').value,
+            name: document.getElementById('observerName').value,
+            id: document.getElementById('observerId').value,
+            childName: document.getElementById('childName').value
+        };
+
+        try {
+            const response = await fetch(`${API_URL}/grades/subscribe`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            showResponse('gradeResponse', true, result);
+        } catch (error) {
+            showResponse('gradeResponse', false, { error: error.message });
+        }
+    }
+
+    async function addGrade(event) {
+        event.preventDefault();
+
+        const data = {
+            studentId: document.getElementById('gradeStudentId').value,
+            subject: document.getElementById('gradeSubject').value,
+            grade: parseFloat(document.getElementById('gradeValue').value),
+            gradeType: document.getElementById('gradeType').value
+        };
+
+        try {
+            const response = await fetch(`${API_URL}/grades/add`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            showResponse('gradeResponse', true, result);
+        } catch (error) {
+            showResponse('gradeResponse', false, { error: error.message });
+        }
+    }
+
+    async function calculateGrade(event) {
+        event.preventDefault();
+
+        const parseGrades = (str) => {
+            return str ? str.split(',').map(g => parseFloat(g.trim())).filter(g => !isNaN(g)) : [];
+        };
+
+        const grades = {
+            exam: parseGrades(document.getElementById('examGrades').value),
+            homework: parseGrades(document.getElementById('homeworkGrades').value),
+            project: parseGrades(document.getElementById('projectGrades').value)
+        };
+
+        const strategy = document.getElementById('strategy').value;
+
+        try {
+            const response = await fetch(`${API_URL}/grades/calculate?strategy=${strategy}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ grades })
+            });
+
+            const result = await response.json();
+            showCalculatorResult(result);
+        } catch (error) {
+            showResponse('calculatorResponse', false, { error: error.message });
+        }
+    }
+
+    function showResponse(elementId, success, data) {
+        const element = document.getElementById(elementId);
+        element.className = `response ${success ? 'success' : 'error'}`;
+        element.style.display = 'block';
+        element.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+    }
+
+    function showCalculatorResult(data) {
+        const element = document.getElementById('calculatorResponse');
+        element.className = 'response';
+        element.style.display = 'block';
+        element.innerHTML = `
+                <div class="result-card">
+                    <h3>Calculation Result</h3>
+                    <p><strong>Final Grade:</strong> ${data.finalGrade.toFixed(2)}</p>
+                    <p><strong>Strategy:</strong> ${data.strategy}</p>
+                    <pre>${JSON.stringify(data.grades, null, 2)}</pre>
+                </div>
+            `;
+    }
+</script>
+</body>
+</html>
